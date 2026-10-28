@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../2_frontal.jpg",
+      "path": "../home2/2_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../2_bedroom.jpg",
+      "path": "../home2/2_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Designer modular kitchen"
     },
     {
-      "path": "../2_kitchen.jpg",
+      "path": "../home2/2_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Sunlit master suite"
     },
     {
-      "path": "../2_bathroom.jpg",
+      "path": "../home2/2_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Contemporary bathroom fittings"
     }

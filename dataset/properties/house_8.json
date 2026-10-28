@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../8_frontal.jpg",
+      "path": "../home8/8_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../8_bedroom.jpg",
+      "path": "../home8/8_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Custom cabinetry kitchen"
     },
     {
-      "path": "../8_kitchen.jpg",
+      "path": "../home8/8_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Tranquil master bedroom"
     },
     {
-      "path": "../8_bathroom.jpg",
+      "path": "../home8/8_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Elegant glass shower bath"
     }

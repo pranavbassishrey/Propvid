@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../4_frontal.jpg",
+      "path": "../home4/4_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../4_bedroom.jpg",
+      "path": "../home4/4_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Sleek open kitchen"
     },
     {
-      "path": "../4_kitchen.jpg",
+      "path": "../home4/4_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Warm hardwood-style bedroom"
     },
     {
-      "path": "../4_bathroom.jpg",
+      "path": "../home4/4_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Modern glass-door bath"
     }

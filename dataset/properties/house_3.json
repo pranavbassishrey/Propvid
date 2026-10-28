@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../3_frontal.jpg",
+      "path": "../home3/3_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../3_bedroom.jpg",
+      "path": "../home3/3_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Gourmet modular kitchen"
     },
     {
-      "path": "../3_kitchen.jpg",
+      "path": "../home3/3_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Expansive master bedroom"
     },
     {
-      "path": "../3_bathroom.jpg",
+      "path": "../home3/3_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Premium sanitary fixtures"
     }

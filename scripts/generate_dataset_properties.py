@@ -124,12 +124,12 @@ def main():
     for h in HOUSES:
         i = h["id"]
         # Images are relative to the property JSON file (which is in dataset/properties/)
-        # So path from dataset/properties/ to dataset/1_frontal.jpg is ../1_frontal.jpg
+        # Path from dataset/properties/ to dataset/home{i}/{i}_frontal.jpg is ../home{i}/{i}_frontal.jpg
         images = [
-            {"path": f"../{i}_frontal.jpg", "label": "Exterior", "feature": "Stunning architecture"},
-            {"path": f"../{i}_bedroom.jpg", "label": "Master Bedroom", "feature": h["features"][0]},
-            {"path": f"../{i}_kitchen.jpg", "label": "Kitchen", "feature": h["features"][1]},
-            {"path": f"../{i}_bathroom.jpg", "label": "Bathroom", "feature": h["features"][2]},
+            {"path": f"../home{i}/{i}_frontal.jpg", "label": "Exterior", "feature": "Stunning architecture"},
+            {"path": f"../home{i}/{i}_bedroom.jpg", "label": "Master Bedroom", "feature": h["features"][0]},
+            {"path": f"../home{i}/{i}_kitchen.jpg", "label": "Kitchen", "feature": h["features"][1]},
+            {"path": f"../home{i}/{i}_bathroom.jpg", "label": "Bathroom", "feature": h["features"][2]},
         ]
 
         prop_data = {

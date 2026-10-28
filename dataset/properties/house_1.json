@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../1_frontal.jpg",
+      "path": "../home1/1_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../1_bedroom.jpg",
+      "path": "../home1/1_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Spacious master bedroom"
     },
     {
-      "path": "../1_kitchen.jpg",
+      "path": "../home1/1_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Modern fitted kitchen"
     },
     {
-      "path": "../1_bathroom.jpg",
+      "path": "../home1/1_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Spa-style bathroom"
     }

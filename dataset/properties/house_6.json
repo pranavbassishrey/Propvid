@@ -11,22 +11,22 @@
   ],
   "images": [
     {
-      "path": "../6_frontal.jpg",
+      "path": "../home6/6_frontal.jpg",
       "label": "Exterior",
       "feature": "Stunning architecture"
     },
     {
-      "path": "../6_bedroom.jpg",
+      "path": "../home6/6_bedroom.jpg",
       "label": "Master Bedroom",
       "feature": "Efficient compact kitchen"
     },
     {
-      "path": "../6_kitchen.jpg",
+      "path": "../home6/6_kitchen.jpg",
       "label": "Kitchen",
       "feature": "Cozy well-lit bedroom"
     },
     {
-      "path": "../6_bathroom.jpg",
+      "path": "../home6/6_bathroom.jpg",
       "label": "Bathroom",
       "feature": "Polished tile bathroom"
     }
