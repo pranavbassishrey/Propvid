@@ -10,3 +10,8 @@ __pycache__/
 *.egg-info/
 .venv/
 .DS_Store
+
+# Extra local test datasets (only 10 houses in dataset/home* and dataset/properties are tracked)
+dataset/Importan/
+dataset/minmax/
+dataset/propertytest/

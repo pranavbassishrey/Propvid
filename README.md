@@ -10,7 +10,7 @@
 
 ---
 
-## 🏢 Business Problem & Relevance (20% Evaluation Criteria)
+## Business Problem & Relevance (20% Evaluation Criteria)
 
 In real estate sales and brokerage:
 - **The Bottleneck:** Sales agents take multiple listing photos on their phones and have basic property specs (price, BHK, amenities, location). However, creating a high-impact video reel for Instagram, LinkedIn, or WhatsApp currently requires manual editing in Premiere, After Effects, or Canva—taking **2 to 4 hours per listing**.
@@ -19,7 +19,7 @@ In real estate sales and brokerage:
 
 ---
 
-## 🧠 AI / ML Approach & Quality Verification (20% Evaluation Criteria)
+## AI / ML Approach & Quality Verification (20% Evaluation Criteria)
 
 > *"If you use AI, explain what the AI does, what information it uses, and how you check its output."*
 
@@ -45,7 +45,7 @@ Propvid follows a strict **Deterministic-First Foundation**:
 
 ---
 
-## 🛠️ Architecture & Data Flow
+## Architecture & Data Flow
 
 ```mermaid
 flowchart TD
@@ -69,7 +69,7 @@ For complete technical specifications, see [docs/architecture.md](docs/architect
 
 ---
 
-## 📦 What is Included in this Submission
+## What is Included in this Submission
 
 - [x] **Working Runnable Prototype:** Full interactive CLI tool (`propvid`) with progress bars, health check, and instant preview.
 - [x] **Source Code:** Modular, clean Python package under [`src/propvid/`](src/propvid/) (zero PyTorch, zero MoviePy, zero OpenCV).
@@ -93,7 +93,7 @@ For complete technical specifications, see [docs/architecture.md](docs/architect
 
 ---
 
-## ⚡ Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Python 3.10 to 3.13 (Python 3.12 recommended)
@@ -126,7 +126,7 @@ OPENROUTER_MODELS=nvidia/nemotron-3.5-super-vl:free,google/gemma-4-31b-it:free,g
 
 ---
 
-## 🚀 How to Run the Solution
+## How to Run the Solution
 
 ### 1. Interactive Video Studio (Recommended)
 Simply run `propvid` without arguments in your terminal. It launches a guided interactive questionnaire:
@@ -179,9 +179,9 @@ propvid validate examples/property.sample.json
 
 ---
 
-## 🧪 Running the Test Suite
+## Running the Test Suite
 
-Run the complete 49-test automated test suite:
+Run the complete 54-test automated test suite:
 ```bash
 pytest -v
 ```
@@ -197,7 +197,7 @@ Tests cover:
 
 ---
 
-## 📚 External Services, AI Models & Libraries Used
+## External Services, AI Models & Libraries Used
 
 | Component | Technology | Role / License |
 |---|---|---|
@@ -213,7 +213,7 @@ Tests cover:
 
 ---
 
-## ⚠️ Limitations & Future Work
+## Limitations & Future Work
 
 1. **2D Ken Burns vs. 3D Generative Video:** Transitions use smooth sub-pixel affine transformations on still photos rather than heavy 3D NeRF or generative video models (Runway/Sora), ensuring high speed (<35s render) and zero GPU requirements.
 2. **16:9 Landscape Priority:** Layouts are currently tuned for widescreen presentations; vertical 9:16 layout support is architected and planned for mobile-first Instagram Reels.
