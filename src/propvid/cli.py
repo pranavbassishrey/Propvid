@@ -59,7 +59,81 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def cmd_make(args: argparse.Namespace) -> int:
     """Generate property promotional video and accompanying artifacts."""
-    print("not implemented yet (milestone 3)")
+    import time
+    start_time = time.time()
+
+    prop, base_dir = load_property(args.input)
+    valid_images = check_images(prop.images, base_dir)
+
+    # For M3, use deterministic template script
+    from propvid.scriptgen.template import build_template_script
+    script = build_template_script(prop)
+
+    resolution = (1920, 1080) if args.res == "1080p" else (1280, 720)
+    fps = 24
+
+    from propvid.planner import plan_timeline
+    plan, warnings = plan_timeline(
+        prop, script, valid_images, resolution=resolution, fps=fps
+    )
+
+    out_dir = Path(args.out).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    video_path = out_dir / "video.mp4"
+    script_path = out_dir / "script.json"
+    srt_path = out_dir / "captions.srt"
+    share_path = out_dir / "share_copy.txt"
+    report_path = out_dir / "run_report.json"
+
+    # Save script JSON
+    with open(script_path, "w", encoding="utf-8") as f:
+        f.write(script.model_dump_json(indent=2))
+
+    # Save SubRip captions
+    from propvid.outputs import write_report, write_share_copy, write_srt
+    write_srt(plan, srt_path)
+
+    # Save share copy
+    write_share_copy(prop, script, share_path)
+
+    # Encode video (silent MP4 for M3 or audio when integrated)
+    from propvid.render.encode import encode_video
+    encode_video(plan, video_path)
+
+    elapsed_time = time.time() - start_time
+    timings = {"total_elapsed_seconds": round(elapsed_time, 2)}
+
+    # Save run report
+    write_report(
+        input_facts=prop,
+        output_path=report_path,
+        total_duration=plan.total_duration,
+        llm_used=False,
+        warnings=warnings,
+        timings=timings,
+    )
+
+    # Final summary message
+    size_mb = video_path.stat().st_size / (1024 * 1024)
+    print("\n[OK] Video generation complete!")
+    print(f"  - Video path:    {video_path}")
+    print(f"  - Duration:      {plan.total_duration:.1f} s ({len(plan.scenes)} scenes)")
+    print(f"  - Resolution:    {resolution[0]}x{resolution[1]} @ {fps} fps")
+    print(f"  - File size:     {size_mb:.2f} MB")
+    print(f"  - Artifacts:     {script_path.name}, {srt_path.name}, {share_path.name}, {report_path.name}")
+    print(f"  - Render time:   {elapsed_time:.1f} s")
+    print(f"\nTo view the video, run:")
+    print(f"  xdg-open {video_path}   # (Linux) or open in your media player")
+
+    if args.open:
+        import subprocess
+        try:
+            opener = "xdg-open" if sys.platform.startswith("linux") else ("open" if sys.platform == "darwin" else "start")
+            subprocess.run([opener, str(video_path)], check=False)
+        except Exception:
+            pass
+
     return 0
 
 
