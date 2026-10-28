@@ -1,0 +1,68 @@
+{
+  "scenes": [
+    {
+      "id": "title_0",
+      "kind": "title",
+      "image_index": 0,
+      "headline": "Green Valley Heights",
+      "caption": "Whitefield, Bengaluru • ₹1.25 Cr",
+      "narration": "Welcome to Green Valley Heights, a 2-BHK Apartment in Whitefield, Bengaluru, offered at ₹1.25 Cr.",
+      "direction": "warm"
+    },
+    {
+      "id": "feature_1",
+      "kind": "feature",
+      "image_index": 1,
+      "headline": "Modular kitchen",
+      "caption": "Modular kitchen",
+      "narration": "Features include Modular kitchen.",
+      "direction": "warm"
+    },
+    {
+      "id": "feature_2",
+      "kind": "feature",
+      "image_index": 2,
+      "headline": "East-facing balcony",
+      "caption": "East-facing balcony",
+      "narration": "This residence provides East-facing balcony.",
+      "direction": "warm"
+    },
+    {
+      "id": "feature_3",
+      "kind": "feature",
+      "image_index": 3,
+      "headline": "Covered parking",
+      "caption": "Covered parking",
+      "narration": "Enjoy the convenience of Covered parking.",
+      "direction": "warm"
+    },
+    {
+      "id": "feature_4",
+      "kind": "feature",
+      "image_index": 4,
+      "headline": "24x7 security",
+      "caption": "24x7 security",
+      "narration": "Highlights include 24x7 security.",
+      "direction": "warm"
+    },
+    {
+      "id": "feature_5",
+      "kind": "feature",
+      "image_index": 5,
+      "headline": "Clubhouse with gym",
+      "caption": "Clubhouse with gym",
+      "narration": "Crafted with Clubhouse with gym.",
+      "direction": "warm"
+    },
+    {
+      "id": "cta_final",
+      "kind": "cta",
+      "image_index": 6,
+      "headline": "Book your site visit today",
+      "caption": "Asha Rao • +91 90000 00000 • sales@example.com",
+      "narration": "Book your site visit today. Contact Asha Rao at +91 90000 00000.",
+      "direction": "warm"
+    }
+  ],
+  "source": "template"
+}

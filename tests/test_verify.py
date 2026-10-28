@@ -89,7 +89,7 @@ def test_verify_banned_phrase_word_boundaries():
         kind="feature",
         headline="Crafted Materials",
         caption="Quality build",
-        narration="Fitted with westbest architectural fixtures.",
+        narration="Fitted with Westbest architectural fixtures.",
     )
     violations_westbest = verify_scene(scene_westbest, prop)
     assert not any("banned phrase" in v and "best" in v for v in violations_westbest)

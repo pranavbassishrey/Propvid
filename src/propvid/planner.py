@@ -82,9 +82,10 @@ def plan_timeline(
         ]
         total_time = sum(durations) - CROSSFADE_OVERLAP * (len(scenes) - 1)
 
-    # 4. If still under 20s, extend lone highlight up to 7s, and Title/CTA hold times up to 8s each
+    # 4. If under 20s, extend lone highlight up to 7s, and Title/CTA hold times up to 8s each
+    # Target 21.0s to ensure a comfortable safety margin above the 20s floor
     if total_time < 20.0 and len(durations) >= 2:
-        shortfall = 20.0 - total_time
+        shortfall = 21.0 - total_time
 
         # Check for lone highlight scene and extend up to 7s
         for idx, s in enumerate(scenes):
@@ -111,8 +112,8 @@ def plan_timeline(
 
         total_time = sum(durations) - CROSSFADE_OVERLAP * (len(scenes) - 1)
 
-    # 5. If still under 20s, relax floor with warning
-    if total_time < 20.0:
+    # 5. If still strictly below 20s (with floating point tolerance), relax floor with warning
+    if total_time < (20.0 - 1e-6):
         warn_msg = (
             f"Total video duration ({total_time:.1f}s) is below target 20s after extending hold times. "
             f"Preserving authentic content without inventing filler scenes."

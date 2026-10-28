@@ -18,27 +18,42 @@ TITLE_TEMPLATES = {
 
 FEATURE_TEMPLATES = {
     "warm": [
-        "Features include {feature}.",
-        "This residence provides {feature}.",
-        "Enjoy the convenience of {feature}.",
-        "Highlights include {feature}.",
-        "Crafted with {feature}.",
+        "This home includes {feature}.",
+        "The property provides {feature}.",
+        "You will find {feature} here.",
+        "Included with this home is {feature}.",
+        "The residence offers {feature}.",
     ],
     "premium": [
-        "The residence features {feature}.",
-        "Thoughtfully designed with {feature}.",
-        "Offering access to {feature}.",
-        "Key highlights include {feature}.",
-        "Distinguished by {feature}.",
+        "The residence includes {feature}.",
+        "The property provides {feature}.",
+        "Amenities include {feature}.",
+        "The layout includes {feature}.",
+        "Key features include {feature}.",
     ],
     "energetic": [
+        "Take a look at the {feature}!",
+        "The home includes {feature}!",
+        "This property features {feature}!",
         "Check out the {feature}!",
-        "Experience great living with {feature}!",
-        "Take advantage of {feature}!",
-        "Featuring {feature}!",
         "Highlights include {feature}!",
     ],
 }
+
+
+def format_feature_for_mid_sentence(feature: str) -> str:
+    """Format feature string for mid-sentence placement without lowercasing acronyms."""
+    words = feature.split()
+    if not words:
+        return feature
+
+    first_word = words[0]
+    # If the first word is all-uppercase (e.g. CCTV, AC, EV, BHK) or has digits (e.g. 24x7), keep it
+    if first_word.isupper() or any(char.isdigit() for char in first_word):
+        return feature
+
+    formatted_first = first_word[0].lower() + first_word[1:]
+    return " ".join([formatted_first] + words[1:])
 
 
 def build_template_script(prop: PropertyInput) -> Script:
@@ -75,7 +90,8 @@ def build_template_script(prop: PropertyInput) -> Script:
         templates = FEATURE_TEMPLATES[tone]
         for idx, feat in enumerate(selected_features):
             tmpl = templates[idx % len(templates)]
-            feat_narration = tmpl.format(feature=feat)
+            mid_feat = format_feature_for_mid_sentence(feat)
+            feat_narration = tmpl.format(feature=mid_feat)
             scenes.append(
                 SceneSpec(
                     id=f"feature_{idx + 1}",
@@ -105,7 +121,7 @@ def build_template_script(prop: PropertyInput) -> Script:
     # 3. CTA Scene
     cta_headline = prop.cta
     cta_caption = prop.cta
-    cta_narration = f"{prop.cta}."
+    cta_narration = f"{prop.cta} for {prop.name}."
 
     if prop.contact:
         contact_items = []

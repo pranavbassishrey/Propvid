@@ -22,7 +22,7 @@ def test_template_script_full_sample():
         scene = script.scenes[idx + 1]
         assert scene.kind == "feature"
         assert scene.headline == feat
-        assert feat in scene.narration
+        assert feat.lower() in scene.narration.lower()
 
     cta_scene = script.scenes[-1]
     assert cta_scene.kind == "cta"
@@ -59,7 +59,7 @@ def test_template_script_no_contact():
     script = build_template_script(prop)
     cta_scene = script.scenes[-1]
     assert cta_scene.caption == "Book now"
-    assert cta_scene.narration == "Book now."
+    assert cta_scene.narration == "Book now for Sun City."
 
 
 def test_tone_to_direction_mapping():
