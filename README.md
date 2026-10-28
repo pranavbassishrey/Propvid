@@ -89,7 +89,7 @@ For complete technical specifications, see [docs/architecture.md](docs/architect
 - [x] **Walkthrough & Demo Notes:** [`docs/demo-notes.md`](docs/demo-notes.md).
 - [x] **AI Models, APIs & Libraries Note:** Full attribution in this README and [docs/architecture.md](docs/architecture.md).
 - [x] **Anonymized Data:** Zero real customer PII; all contacts use synthetic placeholders (`Asha Rao`, `+91 90000 00000`).
-- [x] **Automated Test Suite:** 49 unit and integration tests (`pytest -v`).
+- [x] **Automated Test Suite:** 54 unit and integration tests (`pytest -v`).
 
 ---
 
@@ -146,11 +146,14 @@ You will be prompted for:
 ### 2. Batch / Direct Video Generation
 Generate a video directly from an existing property specification:
 ```bash
-# Render sample listing with speech, music, and auto-open preview:
-propvid examples/property.sample.json -o out/sample --open
+# Ultra-fast rendering with Edge TTS (~2s speech synthesis):
+propvid examples/property.sample.json -o out/sample --tts edge --open
 
-# Render any of the 10 real dataset houses:
-propvid dataset/properties/house_1.json -o out/house_1 --open
+# Local offline Kokoro TTS rendering:
+propvid examples/property.sample.json -o out/sample_kokoro --tts kokoro --open
+
+# Render any of the 10 real dataset houses with matched room photos:
+propvid dataset/properties/house_1.json -o out/house_1 --tts edge --open
 
 # 100% Offline Deterministic Mode (Zero LLM, Zero Network):
 propvid examples/property.sample.json -o out/sample_offline --llm off --tts none
