@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import Dict, Protocol, Tuple
+from typing import Any, Dict, Optional, Protocol, Tuple
 
 import numpy as np
 
@@ -110,7 +110,7 @@ class TTSNoneBackend:
         return np.zeros(0, dtype=np.float32), 24000
 
 
-def get_backend(name: str = "auto") -> TTSBackend:
+def get_backend(name: str = "auto", settings: Optional[Any] = None) -> TTSBackend:
     """Resolve and initialize requested TTS backend."""
     name_clean = (name or "auto").strip().lower()
 
@@ -119,22 +119,22 @@ def get_backend(name: str = "auto") -> TTSBackend:
 
     if name_clean == "kokoro":
         from propvid.audio.tts_kokoro import TTSKokoroBackend
-        return TTSKokoroBackend()
+        return TTSKokoroBackend(settings=settings) if settings else TTSKokoroBackend()
 
     if name_clean == "fish":
         from propvid.audio.tts_fish import TTSFishBackend
-        return TTSFishBackend()
+        return TTSFishBackend(settings=settings) if settings else TTSFishBackend()
 
     if name_clean == "auto":
         try:
             from propvid.audio.tts_kokoro import TTSKokoroBackend
-            return TTSKokoroBackend()
+            return TTSKokoroBackend(settings=settings) if settings else TTSKokoroBackend()
         except Exception:
             pass
 
         try:
             from propvid.audio.tts_fish import TTSFishBackend
-            return TTSFishBackend()
+            return TTSFishBackend(settings=settings) if settings else TTSFishBackend()
         except Exception:
             pass
 

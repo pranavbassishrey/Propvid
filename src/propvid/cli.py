@@ -365,6 +365,147 @@ def cmd_init(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_interactive(args: Optional[argparse.Namespace] = None) -> int:
+    """Guided interactive command-line wizard for property input and instant video generation."""
+    print_banner()
+    print(f"{bold('✦ Interactive Property Video Studio ✦')}")
+    print(dim("Enter your property details below (press Enter to accept default suggested values).\n"))
+
+    def _ask(label: str, default: str, validator=None) -> str:
+        while True:
+            try:
+                raw = input(f" {cyan('?')} {bold(label)} {dim(f'[{default}]')}: ").strip()
+                val = raw if raw else default
+                if validator:
+                    err = validator(val)
+                    if err:
+                        print(f"   {yellow('!')} {err}")
+                        continue
+                return val
+            except (EOFError, KeyboardInterrupt):
+                print()
+                return default
+
+    # 1. Basic details
+    name = _ask("Property name", "Green Valley Heights", lambda v: "Name cannot be empty" if not v.strip() else None)
+    location = _ask("Location (City, Area)", "Whitefield, Bengaluru")
+    price = _ask("Price (e.g. ₹1.25 Cr, ₹85 Lakh)", "₹1.25 Cr")
+    prop_type = _ask("Property type", "2-BHK Luxury Apartment")
+
+    tone = _ask("Narration tone (warm / premium / energetic)", "warm").lower()
+    if tone not in ("warm", "premium", "energetic"):
+        tone = "warm"
+
+    # 2. Key features (1 to 6)
+    features_input = _ask(
+        "Key features (comma-separated, 1-6 features)",
+        "Modular kitchen, East-facing balcony, Covered parking, Infinity pool",
+    )
+    features = [f.strip() for f in features_input.split(",") if f.strip()][:6]
+
+    # 3. Contact & Call to Action
+    contact_name = _ask("Contact person name", "Asha Rao")
+    contact_phone = _ask("Contact phone", "+91 90000 00000")
+    contact_email = _ask("Contact email", "sales@example.com")
+    cta = _ask("Call-to-Action text", "Book your exclusive site visit today")
+
+    # 4. Production settings & Output directory
+    print(f"\n {bold('Production Settings')}")
+    slug = "".join(c if c.isalnum() else "_" for c in name.lower()).strip("_")
+    out_dir_str = _ask("Output folder", f"out/{slug}")
+    out_dir = Path(out_dir_str).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    llm_opt = _ask("AI Script Polish (auto: OpenRouter free models / off: template)", "auto").lower()
+    tts_opt = _ask("Voiceover Audio (auto: Kokoro ONNX / fish: Cloud / none: music only)", "auto").lower()
+    res_opt = _ask("Video Resolution (720p / 1080p)", "720p").lower()
+    if res_opt not in ("720p", "1080p"):
+        res_opt = "720p"
+
+    # 5. Property Photos
+    print(f"\n {bold('Listing Photos')}")
+    print(dim(" Provide a folder containing 4–8 listing images (e.g. examples/images or dataset)."))
+    img_dir_input = _ask("Image directory or file path", "examples/images")
+    img_path = Path(img_dir_input)
+
+    image_entries = []
+    if img_path.is_dir():
+        found = sorted(img_path.glob("*.jpg")) + sorted(img_path.glob("*.png")) + sorted(img_path.glob("*.jpeg"))
+        for p in found:
+            try:
+                rel = os.path.relpath(p.resolve(), out_dir)
+            except ValueError:
+                rel = str(p.resolve())
+            image_entries.append({"path": rel})
+    elif img_path.is_file():
+        try:
+            rel = os.path.relpath(img_path.resolve(), out_dir)
+        except ValueError:
+            rel = str(img_path.resolve())
+        image_entries.append({"path": rel})
+
+    if not image_entries:
+        print(f" {yellow('!')} No images found in '{img_dir_input}'. Automatically falling back to sample listing photos.")
+        default_imgs = [
+            ("examples/images/01_exterior.jpg", "Exterior", None),
+            ("examples/images/02_living_room.jpg", "Living Room", None),
+            ("examples/images/03_kitchen.jpg", "Kitchen", features[0] if features else "Modular kitchen"),
+            ("examples/images/05_bedroom.jpg", "Bedroom", None),
+        ]
+        for src, lbl, feat in default_imgs:
+            src_p = Path(src).resolve()
+            try:
+                rel = os.path.relpath(src_p, out_dir)
+            except ValueError:
+                rel = str(src_p)
+            entry = {"path": rel, "label": lbl}
+            if feat:
+                entry["feature"] = feat
+            image_entries.append(entry)
+    else:
+        print(f" {badge_ok()} Found {len(image_entries)} image(s) for the video timeline.")
+
+    prop_json_path = out_dir / "property.json"
+    prop_dict = {
+        "name": name,
+        "location": location,
+        "price": price,
+        "property_type": prop_type,
+        "tone": tone,
+        "features": features,
+        "images": image_entries,
+        "contact": {
+            "name": contact_name,
+            "phone": contact_phone,
+            "email": contact_email,
+        },
+        "cta": cta,
+    }
+    prop_json_path.write_text(json.dumps(prop_dict, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"\n {badge_ok()} Property specification written to {bold(str(prop_json_path))}")
+
+    # 6. Execute video generation
+    render_now = _ask("Generate and preview video now? (Y/n)", "Y").lower()
+    if render_now in ("y", "yes", ""):
+        print(f"\n{bold('Starting Video Production Pipeline...')}")
+        make_args = argparse.Namespace(
+            input=prop_json_path,
+            input_pos=None,
+            out=out_dir,
+            llm=llm_opt if llm_opt in ("auto", "off", "on") else "auto",
+            tts=tts_opt if tts_opt in ("auto", "kokoro", "fish", "none") else "auto",
+            res=res_opt,
+            music="synth",
+            open=True,
+            debug=False,
+        )
+        return cmd_make(make_args)
+    else:
+        print(f"\nSpecification saved! When you're ready to generate your video, run:")
+        print(f"  {cyan(f'propvid make -i {prop_json_path} -o {out_dir} --open')}")
+        return 0
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
     """System health, environment check, and diagnostic report."""
     print_banner()
@@ -485,10 +626,11 @@ def build_parser() -> argparse.ArgumentParser:
         description="Propvid: Deterministic & AI-Polished Property Video Studio",
         epilog="""
 Examples:
-  propvid make examples/property.sample.json -o out/sample --open
-  propvid examples/property.sample.json -o out/sample
+  propvid                            # Step-by-step interactive creation wizard
+  propvid interactive                # Step-by-step interactive creation wizard
+  propvid examples/property.sample.json -o out/sample --open
+  propvid make examples/property.sample.json -o out/sample
   propvid validate examples/property.sample.json
-  propvid init -o my_listing.json
   propvid doctor --ping
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -567,6 +709,13 @@ Examples:
         help="Automatically open generated video when completed",
     )
 
+    # interactive command
+    subparsers.add_parser(
+        "interactive",
+        aliases=["create", "wizard"],
+        help="Interactive step-by-step video creation wizard",
+    )
+
     # init command
     init_parser = subparsers.add_parser("init", help="Interactively generate a property JSON")
     init_parser.add_argument(
@@ -600,7 +749,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         argv = list(argv)
 
     # If first argument isn't a known subcommand or help flag, default to 'make'
-    subcommands = {"validate", "make", "init", "doctor"}
+    subcommands = {"validate", "make", "init", "doctor", "interactive", "create", "wizard"}
     has_subcommand = any(arg in subcommands for arg in argv)
     is_help = any(arg in {"-h", "--help"} for arg in argv)
     if not has_subcommand and not is_help and len(argv) > 0:
@@ -608,6 +757,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             argv = ["--debug", "make"] + argv[1:]
         else:
             argv = ["make"] + argv
+    elif len(argv) == 0 and sys.stdin.isatty():
+        # When invoked directly with no args in interactive terminal, launch wizard!
+        return cmd_interactive()
 
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -623,6 +775,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return cmd_init(args)
         elif args.subcommand == "doctor":
             return cmd_doctor(args)
+        elif args.subcommand in ("interactive", "create", "wizard"):
+            return cmd_interactive(args)
         else:
             print_banner()
             parser.print_help(sys.stderr)
