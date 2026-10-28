@@ -126,3 +126,17 @@ def test_tts_none_backend():
     arr, sr = backend.synth("Hello world")
     assert len(arr) == 0
     assert sr == 24000
+
+
+def test_tts_edge_backend_mock_and_resolution():
+    """Verify Edge TTS backend instantiation and get_backend resolution."""
+    from propvid.audio.tts_edge import TTSEdgeBackend
+
+    backend = get_backend("edge")
+    assert isinstance(backend, TTSEdgeBackend)
+    assert backend.voice == "en-IN-NeerjaNeural"
+
+    # Test custom voice
+    custom_backend = TTSEdgeBackend(voice="en-US-JennyNeural")
+    assert custom_backend.voice == "en-US-JennyNeural"
+

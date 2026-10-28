@@ -129,7 +129,17 @@ def cmd_make(args: argparse.Namespace) -> int:
     # Step 3: Neural Voiceover & Ambient Soundtrack
     print_step(3, 5, "Synthesizing Neural Speech & Procedural Soundtrack")
     from propvid.audio.tts_base import get_backend
-    tts_backend = get_backend(args.tts, settings=settings)
+    voice = getattr(args, "voice", None)
+    if voice and args.tts in ("edge", "kokoro"):
+        if args.tts == "edge":
+            from propvid.audio.tts_edge import TTSEdgeBackend
+            tts_backend = TTSEdgeBackend(voice=voice, settings=settings)
+        else:
+            from propvid.audio.tts_kokoro import TTSKokoroBackend
+            tts_backend = TTSKokoroBackend(voice=voice, settings=settings)
+    else:
+        tts_backend = get_backend(args.tts, settings=settings)
+
     narration_clips = {}
     narration_durations = {}
 
@@ -137,7 +147,8 @@ def cmd_make(args: argparse.Namespace) -> int:
         from propvid.audio.tts_base import TTSNoneBackend, normalize_for_speech
         if not isinstance(tts_backend, TTSNoneBackend):
             tts_name = tts_backend.__class__.__name__.replace("TTS", "").replace("Backend", "")
-            print(f"  {badge_tts()} Voiceover engine: {bold(tts_name)}")
+            voice_info = f" ({tts_backend.voice})" if hasattr(tts_backend, "voice") and tts_backend.voice else ""
+            print(f"  {badge_tts()} Voiceover engine: {bold(tts_name)}{voice_info}")
             for scene in script.scenes:
                 try:
                     spoken_text = normalize_for_speech(scene.narration)
@@ -423,7 +434,7 @@ def cmd_interactive(args: Optional[argparse.Namespace] = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     llm_opt = _ask("AI Script Polish (auto: OpenRouter free models / off: template)", "auto").lower()
-    tts_opt = _ask("Voiceover Audio (auto: Kokoro ONNX / fish: Cloud / none: music only)", "auto").lower()
+    tts_opt = _ask("Voiceover Engine (edge: Ultra-Fast Neural / kokoro: Local ONNX / fish: Cloud / none)", "edge").lower()
     res_opt = _ask("Video Resolution (720p / 1080p)", "720p").lower()
     if res_opt not in ("720p", "1080p"):
         res_opt = "720p"
@@ -499,7 +510,8 @@ def cmd_interactive(args: Optional[argparse.Namespace] = None) -> int:
             input_pos=None,
             out=out_dir,
             llm=llm_opt if llm_opt in ("auto", "off", "on") else "auto",
-            tts=tts_opt if tts_opt in ("auto", "kokoro", "fish", "none") else "auto",
+            tts=tts_opt if tts_opt in ("auto", "edge", "kokoro", "fish", "none") else "auto",
+            voice=None,
             res=res_opt,
             music="synth",
             open=True,
@@ -579,6 +591,13 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         table_rows.append(["Kokoro ONNX TTS", badge_ok(), f"82M weights ready ({size_mb:.1f} MB in {settings.models_dir})"])
     else:
         table_rows.append(["Kokoro ONNX TTS", badge_warn(), f"Missing in {settings.models_dir} (run download_tts_models.py)"])
+
+    # 6. Edge TTS (Ultra-Fast)
+    try:
+        import edge_tts
+        table_rows.append(["Edge TTS (Ultra-Fast)", badge_ok(), f"v{edge_tts.__version__} ready (2s neural voiceover)"])
+    except ImportError:
+        table_rows.append(["Edge TTS (Ultra-Fast)", badge_skip(), "Optional (install with pip install edge-tts)"])
 
     # 6. OpenRouter API Key
     if settings.openrouter_api_key:
@@ -694,9 +713,14 @@ Examples:
     )
     make_parser.add_argument(
         "--tts",
-        choices=["auto", "kokoro", "fish", "none"],
+        choices=["auto", "edge", "kokoro", "fish", "none"],
         default="auto",
-        help="TTS voice-over backend (default: auto)",
+        help="TTS voice-over backend: 'auto' (default), 'edge' (ultra-fast neural), 'kokoro' (local ONNX), 'fish', or 'none'",
+    )
+    make_parser.add_argument(
+        "--voice",
+        default=None,
+        help="Optional voice override (e.g. Edge: 'en-IN-NeerjaNeural', 'en-US-JennyNeural'; Kokoro: 'af_bella')",
     )
     make_parser.add_argument(
         "--res",

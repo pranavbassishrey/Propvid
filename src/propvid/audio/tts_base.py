@@ -182,14 +182,26 @@ def get_backend(name: str = "auto", settings: Optional[Any] = None) -> TTSBacken
         from propvid.audio.tts_kokoro import TTSKokoroBackend
         return TTSKokoroBackend(settings=settings) if settings else TTSKokoroBackend()
 
+    if name_clean in ("edge", "edge-tts", "edgetts"):
+        from propvid.audio.tts_edge import TTSEdgeBackend
+        return TTSEdgeBackend(settings=settings) if settings else TTSEdgeBackend()
+
     if name_clean == "fish":
         from propvid.audio.tts_fish import TTSFishBackend
         return TTSFishBackend(settings=settings) if settings else TTSFishBackend()
 
     if name_clean == "auto":
+        # Prefer kokoro if models are present locally
         try:
             from propvid.audio.tts_kokoro import TTSKokoroBackend
             return TTSKokoroBackend(settings=settings) if settings else TTSKokoroBackend()
+        except Exception:
+            pass
+
+        # Fall back to edge-tts if installed
+        try:
+            from propvid.audio.tts_edge import TTSEdgeBackend
+            return TTSEdgeBackend(settings=settings) if settings else TTSEdgeBackend()
         except Exception:
             pass
 

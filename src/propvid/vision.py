@@ -193,7 +193,8 @@ def classify_with_vision_llm(
             }
         ],
         "temperature": 0.1,
-        "max_tokens": 100,
+        "max_tokens": 250,
+        "reasoning": {"max_tokens": 0},
     }
 
     headers = {
@@ -212,7 +213,14 @@ def classify_with_vision_llm(
             )
             if resp.status_code == 200:
                 data = resp.json()
-                raw_text = data["choices"][0]["message"]["content"]
+                choices = data.get("choices") or []
+                if not choices:
+                    return None
+                msg = choices[0].get("message") or {}
+                raw_text = msg.get("content") or msg.get("reasoning") or ""
+                if not raw_text or not isinstance(raw_text, str):
+                    return None
+
                 # Tolerant JSON parsing
                 m = re.search(r"\{.*?\}", raw_text, re.DOTALL)
                 if m:
@@ -223,6 +231,15 @@ def classify_with_vision_llm(
                         cache_file.write_text(json.dumps({"category": cat}), encoding="utf-8")
                         logger.info("Vision API classified %s -> %s", image_path.name, cat)
                         return cat
+
+                # Fallback: check if any canonical category name appears in the text
+                lowered = raw_text.lower()
+                for candidate in ALL_CATEGORIES:
+                    if candidate in lowered:
+                        settings.cache_dir.mkdir(parents=True, exist_ok=True)
+                        cache_file.write_text(json.dumps({"category": candidate}), encoding="utf-8")
+                        logger.info("Vision API extracted category %s -> %s", image_path.name, candidate)
+                        return candidate
     except Exception as exc:
         logger.warning("Vision LLM classification failed for %s: %s", image_path.name, exc)
 
