@@ -1,7 +1,7 @@
 {
   "input_hash": "22b5c2d85bf55aa6",
   "property_name": "Green Valley Heights",
-  "total_duration_seconds": 26.08,
+  "total_duration_seconds": 34.79,
   "llm_used": false,
   "models_requested": [],
   "model_used": "none (template)",
@@ -14,7 +14,7 @@
   "reverted_scenes": [],
   "warnings": [],
   "timings": {
-    "total_elapsed_seconds": 10.59
+    "total_elapsed_seconds": 26.72
   },
   "package_versions": {
     "pydantic": "2.14.1",

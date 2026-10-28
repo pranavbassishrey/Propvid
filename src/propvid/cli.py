@@ -65,16 +65,40 @@ def cmd_make(args: argparse.Namespace) -> int:
     prop, base_dir = load_property(args.input)
     valid_images = check_images(prop.images, base_dir)
 
-    # For M3, use deterministic template script
+    # 1. Deterministic template script
     from propvid.scriptgen.template import build_template_script
     script = build_template_script(prop)
+
+    # 2. TTS Voice-over synthesis (strictly preceding timeline planning)
+    from propvid.audio.tts_base import get_backend, normalize_for_speech
+    tts_backend = get_backend(args.tts)
+
+    narration_clips = {}
+    narration_durations = {}
+
+    for scene in script.scenes:
+        if args.tts != "none" and scene.narration.strip():
+            spoken_text = normalize_for_speech(scene.narration)
+            try:
+                clip_arr, clip_sr = tts_backend.synth(spoken_text, scene.direction)
+                if len(clip_arr) > 0 and clip_sr > 0:
+                    narration_clips[scene.id] = (clip_arr, clip_sr)
+                    narration_durations[scene.id] = len(clip_arr) / float(clip_sr)
+            except Exception as exc:
+                logger.warning("TTS generation skipped for scene %s: %s", scene.id, exc)
 
     resolution = (1920, 1080) if args.res == "1080p" else (1280, 720)
     fps = 24
 
+    # 3. Timeline planning incorporating actual speech durations
     from propvid.planner import plan_timeline
     plan, warnings = plan_timeline(
-        prop, script, valid_images, resolution=resolution, fps=fps
+        prop,
+        script,
+        valid_images,
+        resolution=resolution,
+        fps=fps,
+        narration_durations=narration_durations,
     )
 
     out_dir = Path(args.out).resolve()
@@ -85,26 +109,46 @@ def cmd_make(args: argparse.Namespace) -> int:
     srt_path = out_dir / "captions.srt"
     share_path = out_dir / "share_copy.txt"
     report_path = out_dir / "run_report.json"
+    wav_path = out_dir / "mix.wav"
 
-    # Save script JSON
+    # 4. Background music synthesis or loading
+    music_arr = None
+    if args.music == "synth":
+        from propvid.audio.music import synth_ambient
+        music_arr = synth_ambient(plan.total_duration)
+    elif args.music != "none":
+        from propvid.audio.music import load_audio_file
+        try:
+            music_arr = load_audio_file(Path(args.music))
+        except Exception as exc:
+            logger.warning("Could not load music file '%s': %s. Falling back to ambient synth.", args.music, exc)
+            from propvid.audio.music import synth_ambient
+            music_arr = synth_ambient(plan.total_duration)
+
+    # 5. Audio track mixing
+    has_audio = (len(narration_clips) > 0) or (music_arr is not None and len(music_arr) > 0)
+    final_audio_path = None
+    if has_audio:
+        from propvid.audio.mix import mix_audio_track
+        mix_audio_track(plan, narration_clips, music_arr, wav_path)
+        final_audio_path = wav_path
+
+    # 6. Save script JSON, SRT, and share copy
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(script.model_dump_json(indent=2))
 
-    # Save SubRip captions
     from propvid.outputs import write_report, write_share_copy, write_srt
     write_srt(plan, srt_path)
-
-    # Save share copy
     write_share_copy(prop, script, share_path)
 
-    # Encode video (silent MP4 for M3 or audio when integrated)
+    # 7. Render frames and encode video with muxed audio
     from propvid.render.encode import encode_video
-    encode_video(plan, video_path)
+    encode_video(plan, video_path, audio_path=final_audio_path)
 
     elapsed_time = time.time() - start_time
     timings = {"total_elapsed_seconds": round(elapsed_time, 2)}
 
-    # Save run report
+    # 8. Save run report
     write_report(
         input_facts=prop,
         output_path=report_path,
@@ -121,6 +165,7 @@ def cmd_make(args: argparse.Namespace) -> int:
     print(f"  - Duration:      {plan.total_duration:.1f} s ({len(plan.scenes)} scenes)")
     print(f"  - Resolution:    {resolution[0]}x{resolution[1]} @ {fps} fps")
     print(f"  - File size:     {size_mb:.2f} MB")
+    print(f"  - Audio:         {'Speech + Music' if (narration_clips and music_arr is not None) else ('Speech only' if narration_clips else ('Music only' if music_arr is not None else 'Silent'))}")
     print(f"  - Artifacts:     {script_path.name}, {srt_path.name}, {share_path.name}, {report_path.name}")
     print(f"  - Render time:   {elapsed_time:.1f} s")
     print(f"\nTo view the video, run:")

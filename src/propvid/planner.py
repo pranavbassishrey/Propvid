@@ -43,14 +43,16 @@ def plan_timeline(
     scenes = list(script.scenes)
     narration_durations = narration_durations or {}
 
-    # Helper to compute initial scene duration
+    # Helper to compute initial scene duration ensuring full speech clearance
     def get_initial_duration(scene) -> float:
-        if scene.id in narration_durations:
+        if scene.id in narration_durations and narration_durations[scene.id] > 0.05:
             speech_sec = narration_durations[scene.id]
+            # 0.3s start offset + speech length + 0.5s crossfade margin = speech_sec + 0.8s
+            return max(BASE_MIN_DURATION, speech_sec + 0.8)
         else:
             word_count = len(scene.narration.split())
             speech_sec = word_count / WORDS_PER_SECOND
-        return clamp(speech_sec + 0.6, BASE_MIN_DURATION, MAX_SCENE_DURATION)
+            return clamp(speech_sec + 0.6, BASE_MIN_DURATION, MAX_SCENE_DURATION)
 
     # 1. Total duration > 40s check: drop trailing feature scenes if needed
     while len(scenes) > 2:
