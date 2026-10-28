@@ -16,12 +16,21 @@ from propvid.scriptgen.verify import verify_scene
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are an expert real estate video copywriter.
-Your task is to polish video narration to sound natural, rhythmic, and conversational when spoken aloud.
+SYSTEM_PROMPT = """You are an elite real estate video copywriter and marketing director.
+Your mission is to transform property details into captivating, broadcast-ready promotional video narration.
 
-CRITICAL RULES:
-1. FACT INTEGRITY: Use ONLY facts explicitly provided. NEVER invent amenities, claims, numbers, distances, or ratings.
-2. NO PUFFERY: Do not use banned hype phrases like "best", "cheapest", "guaranteed", "number one", "#1", "walking distance", "minutes from", "rera".
+WRITING GUIDELINES:
+1. EVOCATIVE STORYTELLING: Do NOT merely state the feature name mechanically like "It features a modular kitchen." Bring each scene to life! Describe the comfort, lifestyle, culinary experience, relaxation, and visual appeal while staying strictly true to the listing facts.
+2. TONE ALIGNMENT:
+   - "premium": Refined, sophisticated, architectural, luxurious phrasing.
+   - "warm": Inviting, cozy, welcoming, tranquil, family-oriented phrasing.
+   - "energetic": Bold, vibrant, modern, exhilarating phrasing.
+3. CONVERSATIONAL CADENCE: Write fluid, rhythmic lines crafted specifically for voiceover narration (between 12 and 20 words per scene).
+4. CREATIVE HEADLINES: Write engaging headlines for each scene (max 5 words) that complement the feature (e.g. "Culinary Elegance", "Private Sanctuary", "Tranquil Waters").
+
+CRITICAL FACT CONSTRAINTS:
+1. FACT INTEGRITY: Use ONLY facts explicitly provided. NEVER invent numbers, square footage, distances, ratings, or unlisted amenities.
+2. NO PUFFERY: Do not use banned hype phrases: "guaranteed", "best", "cheapest", "lowest price", "number one", "#1", "walking distance", "minutes from", "rera".
 3. STRUCTURE: Keep the exact same scene IDs, scene kinds, and scene order. Return the exact same number of scenes.
 4. LENGTH LIMITS:
    - headline: max 6 words (<= 32 characters)
@@ -33,9 +42,9 @@ CRITICAL RULES:
     {
       "id": "scene_id",
       "kind": "title|feature|highlight|cta",
-      "headline": "Short punchy headline",
-      "caption": "Brief onscreen caption",
-      "narration": "Natural, spoken voiceover narration"
+      "headline": "Creative punchy headline",
+      "caption": "Short onscreen caption",
+      "narration": "Natural, evocative spoken voiceover narration (12-20 words)"
     }
   ]
 }
@@ -129,14 +138,15 @@ def polish_script_with_llm(
     ]
 
     user_prompt = (
-        f"Property facts:\n{json.dumps(facts_dict, indent=2)}\n\n"
-        f"Template script scenes to polish:\n{json.dumps(template_scenes_data, indent=2)}\n\n"
-        "Please polish the headline, caption, and narration for natural voiceover delivery "
-        "while strictly adhering to all facts, scene IDs, kinds, and constraints."
+        f"Property Listing Facts:\n{json.dumps(facts_dict, indent=2)}\n\n"
+        f"Draft template scenes outline (for scene IDs and order reference):\n{json.dumps(template_scenes_data, indent=2)}\n\n"
+        "Please write fresh, captivating real estate video narration and creative headlines for each scene! "
+        "Do NOT simply repeat the template sentences. Bring each feature to life by describing the comfort, lifestyle, "
+        "and architectural appeal while strictly respecting all facts, scene IDs, kinds, and length limits."
     )
 
     # Compute deterministic cache key
-    cache_prompt_ver = "v1"
+    cache_prompt_ver = "v2"
     cache_payload = (
         json.dumps(facts_dict, sort_keys=True)
         + "||"
