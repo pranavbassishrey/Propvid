@@ -99,18 +99,19 @@ def encode_video(
             frame_arr = render_frame(plan, t)
             proc.stdin.write(frame_arr.tobytes())
 
-            pct = int((frame_idx + 1) * 100 / total_frames)
-            if pct % 10 == 0 and pct != last_reported_pct:
-                sys.stderr.write(f"\r[INFO] Encoding video: {pct}% ({frame_idx + 1}/{total_frames} frames)")
-                sys.stderr.flush()
-                last_reported_pct = pct
-
             if progress_callback:
                 progress_callback(frame_idx + 1, total_frames)
+            else:
+                pct = int((frame_idx + 1) * 100 / total_frames)
+                if pct % 10 == 0 and pct != last_reported_pct:
+                    sys.stderr.write(f"\r[INFO] Encoding video: {pct}% ({frame_idx + 1}/{total_frames} frames)")
+                    sys.stderr.flush()
+                    last_reported_pct = pct
 
         proc.stdin.close()
-        sys.stderr.write("\n")
-        sys.stderr.flush()
+        if not progress_callback:
+            sys.stderr.write("\n")
+            sys.stderr.flush()
 
     except (BrokenPipeError, IOError) as exc:
         # FFmpeg process crashed early or stdin closed
