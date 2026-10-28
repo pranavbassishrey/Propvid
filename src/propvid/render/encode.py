@@ -44,6 +44,8 @@ def encode_video(
     cmd = [
         ffmpeg_bin,
         "-y",
+        "-nostats",
+        "-loglevel", "warning",
         "-f", "rawvideo",
         "-vcodec", "rawvideo",
         "-s", f"{width}x{height}",

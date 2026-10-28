@@ -109,11 +109,10 @@ def check_images(images: List[ImageRef], base_dir: Path) -> List[ValidImage]:
                 # Apply EXIF rotation to ensure correct orientation
                 im = ImageOps.exif_transpose(im)
                 w, h = im.size
-                if w < MIN_IMAGE_WIDTH or h < MIN_IMAGE_HEIGHT:
+                is_valid_dim = (w >= MIN_IMAGE_WIDTH and h >= MIN_IMAGE_HEIGHT) or (min(w, h) >= 300 and max(w, h) >= 450)
+                if not is_valid_dim:
                     logger.warning(
-                        "Image is smaller than minimum required %dx%d (got %dx%d), skipping: %s",
-                        MIN_IMAGE_WIDTH,
-                        MIN_IMAGE_HEIGHT,
+                        "Image is smaller than minimum required resolution (got %dx%d), skipping: %s",
                         w,
                         h,
                         img_path,

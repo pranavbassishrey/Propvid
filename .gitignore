@@ -3,6 +3,7 @@
 models/
 out/*
 !out/sample/
+output/
 __pycache__/
 *.pyc
 .pytest_cache/

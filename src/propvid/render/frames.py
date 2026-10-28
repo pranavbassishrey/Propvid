@@ -136,7 +136,11 @@ def _render_single_scene_frame(
         y0 = max_dy // 2
         crop_box = (x0, y0, x0 + width, y0 + height)
 
-    frame = base_img.crop(crop_box).resize((width, height), Image.Resampling.BILINEAR)
+    cropped = base_img.crop(crop_box)
+    if cropped.size != (width, height):
+        frame = cropped.resize((width, height), Image.Resampling.BILINEAR)
+    else:
+        frame = cropped
 
     # Calculate overlay alpha with smooth fade-in and fade-out
     alpha = 1.0
@@ -149,14 +153,14 @@ def _render_single_scene_frame(
     if alpha > 0.01:
         overlay = _get_scene_overlay(scene, resolution)
         if alpha < 0.99:
-            # Scale overlay alpha channel
+            # Fast alpha scaling with LUT
             r, g, b, a = overlay.split()
-            a = a.point(lambda v: int(v * alpha))
+            lut = [int(v * alpha) for v in range(256)]
+            a = a.point(lut)
             overlay = Image.merge("RGBA", (r, g, b, a))
 
-        frame_rgba = frame.convert("RGBA")
-        frame_rgba.alpha_composite(overlay)
-        frame = frame_rgba.convert("RGB")
+        frame = frame.copy()
+        frame.paste(overlay, (0, 0), overlay)
 
     return frame
 
@@ -199,12 +203,8 @@ def render_frame(plan: VideoPlan, t: float) -> np.ndarray:
     # Crossfade progress alpha in [0.0, 1.0]
     overlap_start = scene_b.start
     alpha = max(0.0, min(1.0, (t - overlap_start) / CROSSFADE_DURATION))
-
-    arr_a = np.asarray(frame_a, dtype=np.float32)
-    arr_b = np.asarray(frame_b, dtype=np.float32)
-
-    blended = (1.0 - alpha) * arr_a + alpha * arr_b
-    return np.clip(blended, 0, 255).astype(np.uint8)
+    blended = Image.blend(frame_a, frame_b, alpha)
+    return np.asarray(blended, dtype=np.uint8)
 
 
 def clear_render_cache() -> None:
