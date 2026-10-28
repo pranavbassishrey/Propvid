@@ -10,7 +10,7 @@
 
 ---
 
-## Business Problem & Relevance (20% Evaluation Criteria)
+## Business Problem & Relevance 
 
 In real estate sales and brokerage:
 - **The Bottleneck:** Sales agents take multiple listing photos on their phones and have basic property specs (price, BHK, amenities, location). However, creating a high-impact video reel for Instagram, LinkedIn, or WhatsApp currently requires manual editing in Premiere, After Effects, or Canva—taking **2 to 4 hours per listing**.
@@ -19,7 +19,7 @@ In real estate sales and brokerage:
 
 ---
 
-## AI / ML Approach & Quality Verification (20% Evaluation Criteria)
+## AI / ML Approach & Quality Verification 
 
 > *"If you use AI, explain what the AI does, what information it uses, and how you check its output."*
 
