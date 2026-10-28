@@ -139,3 +139,42 @@ def verify_scene(spec: SceneSpec, facts: PropertyInput) -> List[str]:
                         violations.append(f"Invented entity or proper noun not in facts: '{sub}'")
 
     return violations
+
+
+def verify_share_copy(text: str, facts: PropertyInput) -> List[str]:
+    """Verify that social share copy and hashtags strictly adhere to input facts."""
+    violations: List[str] = []
+    facts_text = _extract_all_text_from_facts(facts)
+    facts_numbers = _extract_numbers(facts_text)
+    facts_words = _extract_words(facts_text)
+
+    # 1. Number verification
+    copy_numbers = _extract_numbers(text)
+    for num in copy_numbers:
+        if num not in facts_numbers:
+            violations.append(f"Invented number in share copy: '{num}'")
+
+    # 2. Banned phrases verification
+    for phrase in BANNED_PHRASES:
+        if phrase.startswith("#"):
+            pattern = re.compile(r"(?:^|\s)" + re.escape(phrase) + r"(?:\b|\s|[.,!?]|$)", re.IGNORECASE)
+        else:
+            pattern = re.compile(r"\b" + re.escape(phrase) + r"\b", re.IGNORECASE)
+        if pattern.search(text) and not pattern.search(facts_text):
+            violations.append(f"Banned phrase in share copy: '{phrase}'")
+
+    # 3. Hashtag checking: each hashtag must stem from facts or standard safe real-estate terms
+    hashtags = re.findall(r"#(\w+)", text)
+    safe_hashtag_terms = {
+        "realestate", "propertyforsale", "hometour", "property", "realty",
+        "apartment", "house", "villa", "penthouse", "sale", "home", "residence"
+    }
+    for tag in hashtags:
+        tag_lower = tag.lower()
+        if tag_lower not in facts_words and tag_lower not in safe_hashtag_terms:
+            # Check if composite of known fact words (e.g. 2BHKApartment or Whitefield)
+            if not any(w in tag_lower for w in facts_words if len(w) > 2):
+                violations.append(f"Unverified hashtag claim in share copy: '#{tag}'")
+
+    return violations
+

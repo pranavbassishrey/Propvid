@@ -82,16 +82,27 @@ def plan_timeline(
         ]
         total_time = sum(durations) - CROSSFADE_OVERLAP * (len(scenes) - 1)
 
-    # 4. If still under 20s, extend Title and CTA hold times up to 8s each
+    # 4. If still under 20s, extend lone highlight up to 7s, and Title/CTA hold times up to 8s each
     if total_time < 20.0 and len(durations) >= 2:
         shortfall = 20.0 - total_time
-        # Extend title first
-        title_headroom = MAX_TITLE_CTA_DURATION - durations[0]
-        title_add = min(shortfall, max(0.0, title_headroom))
-        durations[0] += title_add
-        shortfall -= title_add
 
-        # Then extend CTA
+        # Check for lone highlight scene and extend up to 7s
+        for idx, s in enumerate(scenes):
+            if s.kind == "highlight":
+                highlight_headroom = MAX_SCENE_DURATION - durations[idx]
+                h_add = min(shortfall, max(0.0, highlight_headroom))
+                durations[idx] += h_add
+                shortfall -= h_add
+                break
+
+        # Extend title up to 8.0s
+        if shortfall > 0:
+            title_headroom = MAX_TITLE_CTA_DURATION - durations[0]
+            title_add = min(shortfall, max(0.0, title_headroom))
+            durations[0] += title_add
+            shortfall -= title_add
+
+        # Then extend CTA up to 8.0s
         if shortfall > 0:
             cta_headroom = MAX_TITLE_CTA_DURATION - durations[-1]
             cta_add = min(shortfall, max(0.0, cta_headroom))
@@ -174,5 +185,6 @@ def plan_timeline(
         total_duration=final_duration,
         resolution=resolution,
         fps=fps,
+        warnings=warnings,
     )
     return plan, warnings

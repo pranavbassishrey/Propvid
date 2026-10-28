@@ -82,6 +82,12 @@ def write_share_copy(prop: PropertyInput, script: Script, output_path: Path) -> 
         f"{' '.join(unique_hashtags)}\n"
     )
 
+    from propvid.scriptgen.verify import verify_share_copy
+    violations = verify_share_copy(text, prop)
+    if violations:
+        import logging
+        logging.getLogger(__name__).warning("Share copy verification warnings: %s", violations)
+
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(text)
 

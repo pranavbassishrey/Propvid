@@ -89,10 +89,34 @@ def test_verify_banned_phrase_word_boundaries():
         kind="feature",
         headline="Crafted Materials",
         caption="Quality build",
-        narration="Fitted with Westbest architectural fixtures.",
+        narration="Fitted with westbest architectural fixtures.",
     )
     violations_westbest = verify_scene(scene_westbest, prop)
     assert not any("banned phrase" in v and "best" in v for v in violations_westbest)
+    assert not any("banned phrase" in v for v in violations_westbest)
+
+
+def test_verify_share_copy():
+    """Verify social share copy and hashtag auditing."""
+    from propvid.scriptgen.verify import verify_share_copy
+    prop, _ = load_property("examples/property.sample.json")
+
+    valid_copy = (
+        "Discover Green Valley Heights - 2-BHK Apartment in Whitefield, Bengaluru offered at ₹1.25 Cr. "
+        "Highlights include Modular kitchen. Book your site visit today!\n\n"
+        "#2BHKApartment #Whitefield #Bengaluru #RealEstate #PropertyForSale"
+    )
+    assert verify_share_copy(valid_copy, prop) == []
+
+    bad_copy = (
+        "Discover Green Valley Heights! Best apartment with guaranteed returns. Only 99 units left! #BillionaireLifestyle"
+    )
+    violations = verify_share_copy(bad_copy, prop)
+    assert any("Banned phrase" in v and "best" in v for v in violations)
+    assert any("Banned phrase" in v and "guaranteed" in v for v in violations)
+    assert any("Invented number" in v and "99" in v for v in violations)
+    assert any("Unverified hashtag" in v for v in violations)
+
 
 
 

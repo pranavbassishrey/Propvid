@@ -1,6 +1,6 @@
 """Data models and schemas for propvid."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Literal, Optional
 
@@ -78,13 +78,6 @@ class VideoPlan:
     total_duration: float
     resolution: tuple[int, int]
     fps: int
+    warnings: List[str] = field(default_factory=list)
 
-    def __iter__(self):
-        return iter(self.scenes)
-
-    def __len__(self) -> int:
-        return len(self.scenes)
-
-    def __getitem__(self, index):
-        return self.scenes[index]
 
