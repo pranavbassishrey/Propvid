@@ -3,7 +3,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import numpy as np
 
@@ -26,9 +26,10 @@ class TTSKokoroBackend:
         model_path: Optional[Path] = None,
         voices_path: Optional[Path] = None,
         voice: str = DEFAULT_KOKORO_VOICE,
+        settings: Optional[Any] = None,
     ) -> None:
         self.voice = voice
-        settings = get_settings()
+        settings = settings or get_settings()
 
         env_model = os.getenv("PROPVID_KOKORO_MODEL")
         env_voices = os.getenv("PROPVID_KOKORO_VOICES")
@@ -71,3 +72,5 @@ class TTSKokoroBackend:
         except Exception as exc:
             logger.warning("Kokoro synthesis failed for text '%s': %s", text, exc)
             raise AudioError(f"Kokoro synthesis failed: {exc}") from exc
+
+    synthesize = synth

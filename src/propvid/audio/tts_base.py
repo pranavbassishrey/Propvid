@@ -109,6 +109,8 @@ class TTSNoneBackend:
     def synth(self, text: str, direction: str = "warm") -> Tuple[np.ndarray, int]:
         return np.zeros(0, dtype=np.float32), 24000
 
+    synthesize = synth
+
 
 def get_backend(name: str = "auto", settings: Optional[Any] = None) -> TTSBackend:
     """Resolve and initialize requested TTS backend."""

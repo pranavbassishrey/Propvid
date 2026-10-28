@@ -94,3 +94,5 @@ class TTSFishBackend:
             if isinstance(exc, AudioError):
                 raise
             raise AudioError(f"Fish Audio synthesis connection error: {exc}") from exc
+
+    synthesize = synth

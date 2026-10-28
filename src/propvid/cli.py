@@ -134,17 +134,23 @@ def cmd_make(args: argparse.Namespace) -> int:
     narration_durations = {}
 
     if tts_backend is not None:
-        tts_name = tts_backend.__class__.__name__.replace("TTS", "").replace("Backend", "")
-        print(f"  {badge_tts()} Voiceover engine: {bold(tts_name)}")
-        for scene in script.scenes:
-            try:
-                clip_arr, clip_sr = tts_backend.synthesize(scene.narration, scene.direction)
-                if clip_arr is not None and len(clip_arr) > 0:
-                    narration_clips[scene.id] = (clip_arr, clip_sr)
-                    narration_durations[scene.id] = len(clip_arr) / float(clip_sr)
-            except Exception as exc:
-                logger.warning("TTS generation skipped for scene %s: %s", scene.id, exc)
-        print(f"  {badge_ok()} Generated {len(narration_clips)} narration clip(s)")
+        from propvid.audio.tts_base import TTSNoneBackend, normalize_for_speech
+        if not isinstance(tts_backend, TTSNoneBackend):
+            tts_name = tts_backend.__class__.__name__.replace("TTS", "").replace("Backend", "")
+            print(f"  {badge_tts()} Voiceover engine: {bold(tts_name)}")
+            for scene in script.scenes:
+                try:
+                    spoken_text = normalize_for_speech(scene.narration)
+                    clip_arr, clip_sr = tts_backend.synth(spoken_text, scene.direction)
+                    if clip_arr is not None and len(clip_arr) > 0:
+                        narration_clips[scene.id] = (clip_arr, clip_sr)
+                        narration_durations[scene.id] = len(clip_arr) / float(clip_sr)
+                except Exception as exc:
+                    logger.warning("TTS generation skipped for scene %s: %s", scene.id, exc)
+                    print(f"  {badge_warn()} Scene '{scene.id}' voiceover skipped: {exc}")
+            print(f"  {badge_ok()} Generated {len(narration_clips)} narration clip(s)")
+        else:
+            print(f"  {badge_skip()} Speech voiceover disabled (TTSNoneBackend)")
     else:
         print(f"  {badge_skip()} Speech voiceover disabled (--tts none)")
 
