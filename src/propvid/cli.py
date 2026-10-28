@@ -65,9 +65,18 @@ def cmd_make(args: argparse.Namespace) -> int:
     prop, base_dir = load_property(args.input)
     valid_images = check_images(prop.images, base_dir)
 
-    # 1. Deterministic template script
-    from propvid.scriptgen.template import build_template_script
-    script = build_template_script(prop)
+    # 1. Script generation (deterministic template with optional LLM polish)
+    from propvid.config import get_settings
+    from propvid.scriptgen import generate_script
+    settings = get_settings()
+    script, llm_report = generate_script(prop, llm_mode=args.llm, settings=settings)
+    if llm_report.llm_used:
+        print(f"  - LLM polish:    Active (model: {llm_report.model_used}, cache_hit: {llm_report.cache_hit})")
+        if llm_report.reverted_scenes:
+            print(f"  - Fact audit:    Reverted {len(llm_report.reverted_scenes)} scene(s) to template: {', '.join(llm_report.reverted_scenes)}")
+    else:
+        if args.llm != "off" and llm_report.error:
+            logger.info("LLM polish skipped: %s", llm_report.error)
 
     # 2. TTS Voice-over synthesis (strictly preceding timeline planning)
     from propvid.audio.tts_base import get_backend, normalize_for_speech
@@ -146,15 +155,23 @@ def cmd_make(args: argparse.Namespace) -> int:
     encode_video(plan, video_path, audio_path=final_audio_path)
 
     elapsed_time = time.time() - start_time
-    timings = {"total_elapsed_seconds": round(elapsed_time, 2)}
+    timings = {
+        "total_elapsed_seconds": round(elapsed_time, 2),
+        "llm_latency_seconds": llm_report.latency_sec,
+    }
 
     # 8. Save run report
     write_report(
         input_facts=prop,
         output_path=report_path,
         total_duration=plan.total_duration,
-        llm_used=False,
-        warnings=warnings,
+        llm_used=llm_report.llm_used,
+        models_requested=llm_report.models_requested,
+        model_used=llm_report.model_used,
+        cache_hit=llm_report.cache_hit,
+        tokens=llm_report.tokens,
+        reverted_scenes=llm_report.reverted_scenes,
+        warnings=warnings + ([llm_report.error] if llm_report.error else []),
         timings=timings,
     )
 
@@ -233,9 +250,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     make_parser.add_argument(
         "--llm",
-        choices=["auto", "off"],
+        choices=["auto", "off", "on"],
         default="auto",
-        help="LLM script polish mode (default: auto)",
+        help="LLM script polish mode: 'auto' (default), 'off', or 'on'",
     )
     make_parser.add_argument(
         "--tts",

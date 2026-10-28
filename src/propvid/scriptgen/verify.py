@@ -34,6 +34,7 @@ COMMON_ALLOWLIST = {
     "distinguished", "residence", "home", "living", "access", "convenience",
     "call", "email", "contact", "book", "enquire", "today", "now", "details",
     "site", "visit", "key", "luxury", "lifestyle", "and", "or", "exclusive",
+    "crore", "lakh", "lac", "cr", "bhk", "sqft", "sqm", "apartment", "villa", "floor",
 }
 
 

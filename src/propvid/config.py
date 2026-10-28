@@ -41,7 +41,7 @@ class Settings:
             m.strip()
             for m in os.getenv(
                 "OPENROUTER_MODELS",
-                "qwen/qwen-2.5-72b-instruct,deepseek/deepseek-chat"
+                "nvidia/nemotron-3.5-super-vl:free,google/gemma-4-31b-it:free,google/gemma-4-26b-a4b-it:free,nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
             ).split(",")
             if m.strip()
         ]

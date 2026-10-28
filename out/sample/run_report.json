@@ -1,20 +1,25 @@
 {
   "input_hash": "22b5c2d85bf55aa6",
   "property_name": "Green Valley Heights",
-  "total_duration_seconds": 34.79,
-  "llm_used": false,
-  "models_requested": [],
-  "model_used": "none (template)",
-  "cache_hit": false,
+  "total_duration_seconds": 34.18,
+  "llm_used": true,
+  "models_requested": [
+    "nvidia/nemotron-3.5-super-vl:free",
+    "google/gemma-4-31b-it:free",
+    "google/gemma-4-26b-a4b-it:free"
+  ],
+  "model_used": "nvidia/nemotron-3.5-super-vl:free",
+  "cache_hit": true,
   "tokens": {
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "total_tokens": 0
+    "prompt_tokens": 1002,
+    "completion_tokens": 464,
+    "total_tokens": 1466
   },
   "reverted_scenes": [],
   "warnings": [],
   "timings": {
-    "total_elapsed_seconds": 26.72
+    "total_elapsed_seconds": 31.63,
+    "llm_latency_seconds": 0.0
   },
   "package_versions": {
     "pydantic": "2.14.1",
