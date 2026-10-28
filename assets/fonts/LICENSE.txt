@@ -1,0 +1,9 @@
+DejaVu Fonts License
+
+Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
+Glyphs added to the DejaVu fonts are either in the public domain, or have been
+provided by their creators under an open-source license.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the fonts accompanying this license, to use, copy, modify, merge, publish,
+distribute, and/or sell copies of the Font Software, subject to standard terms.

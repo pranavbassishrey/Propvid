@@ -1,0 +1,24 @@
+{
+  "name": "Green Valley Heights",
+  "location": "Whitefield, Bengaluru",
+  "price": "₹1.25 Cr",
+  "property_type": "2-BHK Apartment",
+  "features": [
+    "Modular kitchen",
+    "East-facing balcony"
+  ],
+  "contact": {
+    "name": "Asha Rao",
+    "phone": "+91 90000 00000",
+    "email": "sales@example.com"
+  },
+  "cta": "Book your site visit today",
+  "tone": "warm",
+  "images": [
+    {"path": "images/missing_photo_nonexistent.jpg"},
+    {"path": "images/corrupt_test.jpg"},
+    {"path": "images/tiny_test.jpg"},
+    {"path": "images/01_exterior.jpg"},
+    {"path": "images/02_living_room.jpg"}
+  ]
+}

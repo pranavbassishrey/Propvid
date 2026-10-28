@@ -1,0 +1,10 @@
+{
+  "name": "Skyline Residency",
+  "location": "Indiranagar, Bengaluru",
+  "price": "₹2.10 Cr",
+  "property_type": "3-BHK Penthouse",
+  "images": [
+    {"path": "images/01_exterior.jpg"},
+    {"path": "images/02_living_room.jpg"}
+  ]
+}

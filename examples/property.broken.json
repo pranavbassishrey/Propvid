@@ -1,0 +1,10 @@
+{
+  "location": "Whitefield, Bengaluru",
+  "price": "₹1.25 Cr",
+  "property_type": "2-BHK Apartment",
+  "features": ["Modular kitchen"],
+  "images": [
+    {"path": "images/nonexistent_missing_photo.jpg"},
+    {"path": "images/01_exterior.jpg"}
+  ]
+}
