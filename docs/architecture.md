@@ -77,8 +77,16 @@ flowchart TD
 ### Why Single-Request LLM with Router?
 Sending multiple chat completions per video creates high latency, cost, and rate-limit risks. By combining the primary model (`nvidia/nemotron-3.5-super-vl:free`) and fallbacks (`google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free`) into a single OpenRouter request with disk caching, the system guarantees instant retries and zero provider lock-in.
 
+### Why Two-Step Image Recognition (Filename + Vision LLM)?
+Real estate listings frequently mix photos in arbitrary order (e.g., washroom, kitchen, bedroom, facade). If scenes are assigned images sequentially, a video might showcase a bathroom photo while speaking about the modular kitchen. Propvid solves this with a two-step recognition architecture:
+1. **Step 1 (Deterministic Filename Classification):** Fast, zero-overhead regex/token parsing identifying canonical room types (`kitchen`, `bathroom`/`washroom`, `bedroom`, `living_room`, `dining_room`, `exterior`, `pool`, `parking`, `balcony`, `gym`).
+2. **Step 2 (Vision LLM Fallback):** If photos have generic or random names (e.g. `IMG_0042.jpg`), Propvid automatically invokes OpenRouter Vision models (`nvidia/nemotron-3.5-super-vl:free` or `google/gemma-4-31b-it:free`) to classify the room from downscaled thumbnails, caching classifications by SHA-256 hash.
+3. **Content-Aware Scene Matching:** Features match their corresponding room type (kitchen -> kitchen photo; frontal/exterior -> Title & CTA), with strict guardrails preventing bathroom photos from ever appearing during kitchen or living room voiceovers.
+
 ### Why Acoustic Normalization strictly for TTS?
-Visual overlays and subtitles must show clean, professional shorthand like `"₹1.25 Cr"` and `"3 BHK"`. If text normalization is applied globally, onscreen cards become verbose and cluttered (`"1.25 crore rupees"`). Propvid isolates text expansion strictly to the audio synthesis boundary.
+Visual overlays and subtitles must show clean, professional shorthand like `"₹1.75 Cr"`, `"56 Cr"`, and `"3 BHK"`. If text normalization is applied globally, onscreen cards become verbose and cluttered. Propvid isolates text expansion strictly to the audio synthesis boundary:
+- **Price Speech:** Normalized to natural spoken English (`1.75cr` -> `"one point 75 crores"`, `75l` -> `"75 lakhs"`, `2.5m` -> `"two point 5 millions"`, `1.2b` -> `"one point 2 billions"`, `50k` -> `"50 thousands"`). Decimals are cleanly pronounced as `"point"` with non-spaced digits.
+- **BHK & Telephone:** `"5BHK"` -> `"5 B H K"`, telephone numbers grouped into paced digit blocks.
 
 ### Why Procedural Audio Synthesis?
 Stock music tracks introduce licensing risks, copyright strikes on social media, and dependency on bundled audio assets. Propvid generates ambient harmonic soundscapes purely from mathematical trigonometric functions in NumPy, ensuring clean royalty-free audio for every video.
