@@ -3,10 +3,10 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests: 49 Passed](https://img.shields.io/badge/tests-49%20passed-brightgreen.svg)]()
+[![Tests: 54 Passed](https://img.shields.io/badge/tests-54%20passed-brightgreen.svg)]()
 [![Build: Passing](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 
-**Propvid** is a deterministic-first, AI-polished video creation tool built for real estate sales and marketing teams. It transforms raw property listing facts (`property.json`) and 4–8 photographs into broadcast-ready, professional 16:9 promotional videos (20–40 seconds) complete with neural voiceovers, dynamic Ken Burns camera motion, elegant typography panels, royalty-free ambient music, synchronized SubRip subtitles (`captions.srt`), fact-checked social media marketing copy (`share_copy.txt`), and execution audit reports (`run_report.json`)—all without opening a video editor.
+**Propvid** is a deterministic-first, AI-polished video creation tool built for real estate sales and marketing teams. It transforms raw property listing facts (`property.json`) and 4–8 photographs into broadcast-ready, professional 16:9 promotional videos (20–40 seconds) complete with neural voiceovers (ultra-fast Edge TTS or local offline Kokoro ONNX), dynamic Ken Burns camera motion, elegant typography panels, royalty-free ambient music, synchronized SubRip subtitles (`captions.srt`), fact-checked social media marketing copy (`share_copy.txt`), and execution audit reports (`run_report.json`)—all without opening a video editor.
 
 ---
 
@@ -55,7 +55,7 @@ flowchart TD
     D -- off / offline --> F[Fact & Safety Auditor: verify.py]
     D -- auto / on --> E[OpenRouter Router Array: Nemotron / Gemma]
     E --> F
-    F -->|Polished Fact-Verified Script| G[Neural Voiceover: Kokoro ONNX / Fish Audio]
+    F -->|Polished Fact-Verified Script| G[Neural Voiceover: Edge TTS / Kokoro ONNX / Fish Audio]
     G -->|Speech Durations| H[Timeline Planner: 20-40s Clamping]
     H --> I[Procedural Ambient Music: NumPy Cmaj7-Am7]
     I --> J[Stereo Mixer: Dynamic Auto-Ducking]
@@ -139,7 +139,8 @@ You will be prompted for:
 3. Key Features (1–6 amenities)
 4. Contact Info & Call to Action
 5. Listing photos folder (e.g. `examples/images` or `dataset`)
-6. Instant preview option (`--open`)
+6. Voiceover Engine (`edge` for ~2s ultra-fast, `kokoro` for offline, or `none` for music only)
+7. Instant preview option (`--open`)
 
 ---
 
@@ -158,6 +159,16 @@ propvid dataset/properties/house_1.json -o out/house_1 --tts edge --open
 # 100% Offline Deterministic Mode (Zero LLM, Zero Network):
 propvid examples/property.sample.json -o out/sample_offline --llm off --tts none
 ```
+
+---
+
+### Voiceover Engine Options (`--tts` and `--voice`)
+Propvid provides multiple voiceover backends to balance synthesis speed and offline requirements:
+- `--tts edge` (**Recommended / Ultra-Fast**): Uses Microsoft Edge neural speech over HTTPS. Synthesizes all video narration clips in **under 2 seconds**. Default voice: `en-IN-NeerjaNeural` (Indian English). Also supports `en-IN-PrabhatNeural`, `en-US-JennyNeural`, `en-US-GuyNeural`, `en-US-AriaNeural`.
+- `--tts kokoro` (**100% Offline Local**): Runs local 82M Kokoro ONNX model weights on CPU/GPU with zero internet access required.
+- `--tts fish` (**Cloud TTS**): High-expressive cloud voice synthesis via Fish Audio API.
+- `--tts none` (**Music Only**): Mutes voiceover narration and generates pure ambient promotional music.
+- `--voice <name>`: Explicitly select a voice profile (e.g. `--voice en-IN-NeerjaNeural` or `--voice af_bella`).
 
 ---
 
@@ -203,7 +214,8 @@ Tests cover:
 |---|---|---|
 | **Primary LLM** | `nvidia/nemotron-3.5-super-vl:free` | Single-request script polish via OpenRouter |
 | **Fallback LLMs** | `google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free` | Router fallback within OpenRouter request |
-| **Neural TTS** | Kokoro ONNX v1.0 (82M parameters) | High-speed offline neural speech synthesis (Apache 2.0) |
+| **Fast Neural TTS** | Microsoft Edge TTS (`edge-tts`) | High-speed neural voiceover (~2s runtime) with Indian & US English voices |
+| **Offline Neural TTS** | Kokoro ONNX v1.0 (82M parameters) | 100% offline local neural speech synthesis (Apache 2.0) |
 | **Cloud TTS (Opt)** | Fish Audio API | Optional cloud voiceover backend |
 | **Audio Synthesis** | NumPy | Pure procedural trigonometric synthesis of Cmaj7-Am7 ambient score |
 | **Video Encoding** | `imageio-ffmpeg` (FFmpeg v7.0.2) | Self-contained platform FFmpeg binary (zero system install) |
@@ -217,4 +229,4 @@ Tests cover:
 
 1. **2D Ken Burns vs. 3D Generative Video:** Transitions use smooth sub-pixel affine transformations on still photos rather than heavy 3D NeRF or generative video models (Runway/Sora), ensuring high speed (<35s render) and zero GPU requirements.
 2. **16:9 Landscape Priority:** Layouts are currently tuned for widescreen presentations; vertical 9:16 layout support is architected and planned for mobile-first Instagram Reels.
-3. **Single Voiceover Narrator:** Utilizes Kokoro's clear primary voice profile; conversational dialogue between multiple agents is not yet implemented.
+3. **Single Voiceover Persona:** Narration is delivered by a single selected voice persona (e.g. Edge TTS `en-IN-NeerjaNeural` or Kokoro `af_bella`); multi-speaker dialogue between agent and buyer is not yet implemented.
