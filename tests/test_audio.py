@@ -16,10 +16,13 @@ from propvid.schema import PropertyInput, SceneSpec, Script
 
 def test_normalize_for_speech():
     """Verify acoustic text normalization for Indian real-estate conventions."""
-    # 1. Price denominations
-    assert "1.25 crore rupees" in normalize_for_speech("Offered at ₹1.25 Cr.")
-    assert "75 lakh rupees" in normalize_for_speech("Priced at ₹75 L.")
-    assert "50,000 rupees" in normalize_for_speech("Booking token ₹50,000.")
+    # 1. Price denominations (crores, lakhs, millions, billions, thousands with decimal point)
+    assert "one point 25 crores" in normalize_for_speech("Offered at ₹1.25 Cr.")
+    assert "one point 75 crores" in normalize_for_speech("Priced at 1.75cr.")
+    assert "75 lakhs" in normalize_for_speech("Priced at ₹75 L.")
+    assert "two point 5 millions" in normalize_for_speech("Valued at 2.5m.")
+    assert "one point 2 billions" in normalize_for_speech("Project budget 1.2b.")
+    assert "50 thousands" in normalize_for_speech("Booking token 50k.")
 
     # 2. BHK designation
     assert "2 B H K" in normalize_for_speech("A modern 2-BHK Apartment.")

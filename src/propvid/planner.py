@@ -123,42 +123,17 @@ def plan_timeline(
         logger.warning(warn_msg)
         warnings.append(warn_msg)
 
-    # 6. Assign images and motion presets
+    # 6. Assign images and motion presets using two-step content-aware matching
+    from propvid.vision import match_scenes_to_images
+
+    scene_image_matches = match_scenes_to_images(scenes, valid_images)
     planned_scenes: List[PlannedScene] = []
-    used_images: List[Path] = []
     image_motion_history: Dict[Path, int] = {}
     current_time = 0.0
 
-    # Index valid images by associated feature
-    feature_to_image: Dict[str, ValidImage] = {}
-    for img in valid_images:
-        if img.feature:
-            feature_to_image[img.feature.strip().lower()] = img
-
-    num_images = len(valid_images)
-
-    for i, (scene, dur) in enumerate(zip(scenes, durations)):
-        # Select image
-        assigned_img: ValidImage
-        if scene.kind == "title":
-            assigned_img = valid_images[0]
-        elif scene.kind == "cta":
-            assigned_img = valid_images[-1]
-        else:
-            # Feature or highlight scene
-            matched = feature_to_image.get(scene.headline.strip().lower())
-            if matched:
-                assigned_img = matched
-            else:
-                # Next unused or cycle through images
-                unused = [img for img in valid_images if img.path not in used_images]
-                if unused:
-                    assigned_img = unused[0]
-                else:
-                    assigned_img = valid_images[i % num_images]
-
-        img_path = assigned_img.path
-        used_images.append(img_path)
+    for i, ((scene, img_path, img_idx), dur) in enumerate(zip(scene_image_matches, durations)):
+        # Sync scene.image_index so script and plan are aligned
+        scene.image_index = img_idx
 
         # Select motion preset (cycle, ensuring different preset on reuse)
         preset_idx = image_motion_history.get(img_path, i) % len(MOTION_PRESETS)

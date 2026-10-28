@@ -51,32 +51,91 @@ def _expand_phone_digits(match: re.Match) -> str:
     return (" ".join(words) + " " + ", ".join(blocks)).strip()
 
 
+NUM_WORDS = {
+    0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+    6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten",
+    11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen", 15: "fifteen",
+    16: "sixteen", 17: "seventeen", 18: "eighteen", 19: "nineteen",
+    20: "twenty", 30: "thirty", 40: "forty", 50: "fifty",
+    60: "sixty", 70: "seventy", 80: "eighty", 90: "ninety",
+}
+
+UNIT_SPEECH_MAP = {
+    "cr": "crores",
+    "crore": "crores",
+    "crores": "crores",
+    "l": "lakhs",
+    "lac": "lakhs",
+    "lacs": "lakhs",
+    "lakh": "lakhs",
+    "lakhs": "lakhs",
+    "m": "millions",
+    "million": "millions",
+    "millions": "millions",
+    "b": "billions",
+    "billion": "billions",
+    "billions": "billions",
+    "k": "thousands",
+    "thousand": "thousands",
+    "thousands": "thousands",
+}
+
+
+def _int_to_words(n: int) -> str:
+    """Convert integer up to 999 to English words for natural pronunciation."""
+    if n in NUM_WORDS:
+        return NUM_WORDS[n]
+    if n < 100:
+        tens = (n // 10) * 10
+        rem = n % 10
+        return f"{NUM_WORDS[tens]}-{NUM_WORDS[rem]}"
+    if n < 1000:
+        hundreds = n // 100
+        rem = n % 100
+        res = f"{NUM_WORDS[hundreds]} hundred"
+        if rem:
+            res += f" {_int_to_words(rem)}"
+        return res
+    return str(n)
+
+
+def _format_price_speech(match: re.Match) -> str:
+    """Format price for natural voiceover delivery.
+
+    e.g. 1.75cr -> 'one point 75 crores', 75l -> '75 lakhs', 2.5m -> 'two point 5 millions'.
+    Decimals are pronounced 'point' with non-spaced digits.
+    """
+    int_str, dec_str, unit_raw = match.groups()
+    val_int = int(int_str)
+    unit = UNIT_SPEECH_MAP.get(unit_raw.lower(), unit_raw.lower())
+
+    if dec_str:
+        spoken_num = f"{_int_to_words(val_int)} point {dec_str}"
+    else:
+        spoken_num = _int_to_words(val_int) if val_int < 20 else str(val_int)
+
+    return f"{spoken_num} {unit}"
+
+
 def normalize_for_speech(text: str) -> str:
     """Normalize text strictly for acoustic TTS rendering.
 
-    Expands Indian Rupees, Crore/Lakh denominations, BHK designations,
-    24x7 timing, and pacing for telephone numbers. Text overlays and facts
-    verification remain unnormalized.
+    Expands prices (e.g. 1.75cr -> one point 75 crores, 75L -> 75 lakhs),
+    BHK designations (5BHK -> 5 B H K), 24x7 timing, and telephone pacing.
+    Text overlays and facts verification remain unnormalized.
     """
     if not text:
         return ""
 
     out = text
 
-    # 1. Price abbreviations: ₹1.25 Cr -> 1.25 crore rupees
-    out = re.sub(
-        r"₹\s*(\d+(?:[.,]\d+)*)\s*(?:cr|crore|crores)\b",
-        r"\1 crore rupees",
-        out,
-        flags=re.IGNORECASE,
+    # 1. Price normalizations (with or without currency symbol)
+    price_pattern = re.compile(
+        r"(?:(?:₹|rs\.?|inr|\$)\s*)?(\d+)(?:\.(\d+))?\s*(cr|crores?|lakhs?|lacs?|l|millions?|m|billions?|b|thousands?|k)\b",
+        re.IGNORECASE,
     )
-    # ₹75 L -> 75 lakh rupees
-    out = re.sub(
-        r"₹\s*(\d+(?:[.,]\d+)*)\s*(?:l|lakh|lakhs)\b",
-        r"\1 lakh rupees",
-        out,
-        flags=re.IGNORECASE,
-    )
+    out = price_pattern.sub(_format_price_speech, out)
+
     # Remaining standalone ₹ -> rupees
     out = re.sub(r"₹\s*(\d+(?:[.,]\d+)*)", r"\1 rupees", out)
 
