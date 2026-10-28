@@ -1,0 +1,40 @@
+{
+  "name": "Sunset Ridge",
+  "location": "Hebbal, Bengaluru",
+  "price": "\u20b92.45 Cr",
+  "property_type": "3 BHK Lakeside Penthouse",
+  "tone": "energetic",
+  "features": [
+    "Chef-grade modular kitchen",
+    "Scenic master suite",
+    "Spacious bath with vanity"
+  ],
+  "images": [
+    {
+      "path": "../7_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../7_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Chef-grade modular kitchen"
+    },
+    {
+      "path": "../7_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Scenic master suite"
+    },
+    {
+      "path": "../7_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Spacious bath with vanity"
+    }
+  ],
+  "contact": {
+    "name": "Arjun Varma",
+    "phone": "+91 98444 77889",
+    "email": "arjun@sunsetridge.in"
+  },
+  "cta": "Experience luxury living today"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Greenwood Enclave",
+  "location": "Sarjapur Road, Bengaluru",
+  "price": "\u20b995 Lakh",
+  "property_type": "2 BHK Contemporary Apartment",
+  "tone": "warm",
+  "features": [
+    "Efficient compact kitchen",
+    "Cozy well-lit bedroom",
+    "Polished tile bathroom"
+  ],
+  "images": [
+    {
+      "path": "../6_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../6_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Efficient compact kitchen"
+    },
+    {
+      "path": "../6_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Cozy well-lit bedroom"
+    },
+    {
+      "path": "../6_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Polished tile bathroom"
+    }
+  ],
+  "contact": {
+    "name": "Deepa Nair",
+    "phone": "+91 97333 66778",
+    "email": "deepa@greenwood.in"
+  },
+  "cta": "Visit our model apartment"
+}

@@ -129,12 +129,19 @@ def get_backend(name: str = "auto") -> TTSBackend:
         try:
             from propvid.audio.tts_kokoro import TTSKokoroBackend
             return TTSKokoroBackend()
-        except Exception as exc:
-            logger.warning(
-                "Kokoro TTS is unavailable (%s). Falling back to silent video mode.",
-                exc,
-            )
-            return TTSNoneBackend()
+        except Exception:
+            pass
+
+        try:
+            from propvid.audio.tts_fish import TTSFishBackend
+            return TTSFishBackend()
+        except Exception:
+            pass
+
+        logger.warning(
+            "No neural TTS backends available. Falling back to silent video mode."
+        )
+        return TTSNoneBackend()
 
     logger.warning("Unrecognized TTS backend '%s'. Falling back to silent mode.", name)
     return TTSNoneBackend()

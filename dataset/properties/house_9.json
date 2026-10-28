@@ -1,0 +1,40 @@
+{
+  "name": "Crestview Heights",
+  "location": "Electronic City, Bengaluru",
+  "price": "\u20b985 Lakh",
+  "property_type": "2 BHK Urban Living",
+  "tone": "warm",
+  "features": [
+    "Streamlined modern kitchen",
+    "Sunny master bedroom",
+    "Clean modern bathroom"
+  ],
+  "images": [
+    {
+      "path": "../9_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../9_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Streamlined modern kitchen"
+    },
+    {
+      "path": "../9_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Sunny master bedroom"
+    },
+    {
+      "path": "../9_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Clean modern bathroom"
+    }
+  ],
+  "contact": {
+    "name": "Aditya Menon",
+    "phone": "+91 99450 99001",
+    "email": "aditya@crestview.in"
+  },
+  "cta": "Call now to reserve"
+}

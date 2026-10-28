@@ -1,0 +1,40 @@
+{
+  "name": "The Grand Horizon",
+  "location": "Jayanagar, Bengaluru",
+  "price": "\u20b93.10 Cr",
+  "property_type": "4 BHK Ultra-Luxury Villa",
+  "tone": "premium",
+  "features": [
+    "Italian-finished kitchen",
+    "Executive master suite",
+    "Ensuite luxury bathroom"
+  ],
+  "images": [
+    {
+      "path": "../5_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../5_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Italian-finished kitchen"
+    },
+    {
+      "path": "../5_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Executive master suite"
+    },
+    {
+      "path": "../5_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Ensuite luxury bathroom"
+    }
+  ],
+  "contact": {
+    "name": "Karan Malhotra",
+    "phone": "+91 98111 55667",
+    "email": "karan@grandhorizon.com"
+  },
+  "cta": "Request an exclusive preview"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Maple Crest",
+  "location": "HSR Layout, Bengaluru",
+  "price": "\u20b91.60 Cr",
+  "property_type": "3 BHK Independent House",
+  "tone": "warm",
+  "features": [
+    "Sleek open kitchen",
+    "Warm hardwood-style bedroom",
+    "Modern glass-door bath"
+  ],
+  "images": [
+    {
+      "path": "../4_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../4_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Sleek open kitchen"
+    },
+    {
+      "path": "../4_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Warm hardwood-style bedroom"
+    },
+    {
+      "path": "../4_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Modern glass-door bath"
+    }
+  ],
+  "contact": {
+    "name": "Ananya Roy",
+    "phone": "+91 99000 44556",
+    "email": "ananya@maplecrest.in"
+  },
+  "cta": "Enquire now for details"
+}

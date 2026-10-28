@@ -1,0 +1,40 @@
+{
+  "name": "Royal Palms Estate",
+  "location": "Bellary Road, Bengaluru",
+  "price": "\u20b94.50 Cr",
+  "property_type": "5 BHK Signature Mansion",
+  "tone": "premium",
+  "features": [
+    "Island modular kitchen",
+    "Palatial master bedroom",
+    "Five-piece designer bath"
+  ],
+  "images": [
+    {
+      "path": "../10_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../10_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Island modular kitchen"
+    },
+    {
+      "path": "../10_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Palatial master bedroom"
+    },
+    {
+      "path": "../10_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Five-piece designer bath"
+    }
+  ],
+  "contact": {
+    "name": "Meera Kapoor",
+    "phone": "+91 98100 00112",
+    "email": "meera@royalpalms.com"
+  },
+  "cta": "Schedule VIP showing"
+}

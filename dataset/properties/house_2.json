@@ -1,0 +1,40 @@
+{
+  "name": "Serene Palms",
+  "location": "Indiranagar, Bengaluru",
+  "price": "\u20b92.20 Cr",
+  "property_type": "4 BHK Luxury Residence",
+  "tone": "warm",
+  "features": [
+    "Designer modular kitchen",
+    "Sunlit master suite",
+    "Contemporary bathroom fittings"
+  ],
+  "images": [
+    {
+      "path": "../2_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../2_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Designer modular kitchen"
+    },
+    {
+      "path": "../2_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Sunlit master suite"
+    },
+    {
+      "path": "../2_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Contemporary bathroom fittings"
+    }
+  ],
+  "contact": {
+    "name": "Pooja Reddy",
+    "phone": "+91 98800 22334",
+    "email": "pooja@serenepalms.com"
+  },
+  "cta": "Book a site visit today"
+}

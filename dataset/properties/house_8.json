@@ -1,0 +1,40 @@
+{
+  "name": "Silver Birch Residences",
+  "location": "JP Nagar, Bengaluru",
+  "price": "\u20b91.75 Cr",
+  "property_type": "3 BHK Modern Duplex",
+  "tone": "premium",
+  "features": [
+    "Custom cabinetry kitchen",
+    "Tranquil master bedroom",
+    "Elegant glass shower bath"
+  ],
+  "images": [
+    {
+      "path": "../8_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../8_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Custom cabinetry kitchen"
+    },
+    {
+      "path": "../8_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Tranquil master bedroom"
+    },
+    {
+      "path": "../8_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Elegant glass shower bath"
+    }
+  ],
+  "contact": {
+    "name": "Sneha Joshi",
+    "phone": "+91 98888 88990",
+    "email": "sneha@silverbirch.in"
+  },
+  "cta": "Book your walkthrough"
+}

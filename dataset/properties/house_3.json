@@ -1,0 +1,40 @@
+{
+  "name": "Azure Bay View",
+  "location": "Koramangala, Bengaluru",
+  "price": "\u20b91.85 Cr",
+  "property_type": "3 BHK Premium Apartment",
+  "tone": "energetic",
+  "features": [
+    "Gourmet modular kitchen",
+    "Expansive master bedroom",
+    "Premium sanitary fixtures"
+  ],
+  "images": [
+    {
+      "path": "../3_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../3_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Gourmet modular kitchen"
+    },
+    {
+      "path": "../3_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Expansive master bedroom"
+    },
+    {
+      "path": "../3_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Premium sanitary fixtures"
+    }
+  ],
+  "contact": {
+    "name": "Vikram Sen",
+    "phone": "+91 97400 33445",
+    "email": "vikram@azurebay.in"
+  },
+  "cta": "Contact our sales team"
+}

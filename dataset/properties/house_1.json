@@ -1,0 +1,40 @@
+{
+  "name": "Oakwood Manor",
+  "location": "Whitefield, Bengaluru",
+  "price": "\u20b91.45 Cr",
+  "property_type": "3 BHK Villa",
+  "tone": "premium",
+  "features": [
+    "Spacious master bedroom",
+    "Modern fitted kitchen",
+    "Spa-style bathroom"
+  ],
+  "images": [
+    {
+      "path": "../1_frontal.jpg",
+      "label": "Exterior",
+      "feature": "Stunning architecture"
+    },
+    {
+      "path": "../1_bedroom.jpg",
+      "label": "Master Bedroom",
+      "feature": "Spacious master bedroom"
+    },
+    {
+      "path": "../1_kitchen.jpg",
+      "label": "Kitchen",
+      "feature": "Modern fitted kitchen"
+    },
+    {
+      "path": "../1_bathroom.jpg",
+      "label": "Bathroom",
+      "feature": "Spa-style bathroom"
+    }
+  ],
+  "contact": {
+    "name": "Rohan Sharma",
+    "phone": "+91 98450 11223",
+    "email": "rohan@oakwood.in"
+  },
+  "cta": "Schedule your private tour"
+}
